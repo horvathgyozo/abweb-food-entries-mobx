@@ -1,0 +1,6 @@
+.btn.add-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 30px;
+}

@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Application from './components/application';
 
+import './index.css'
 import 'bootswatch/cosmo/bootstrap.min.css'
 
 render(
