@@ -4,7 +4,7 @@ Based on [mobx-react-boilerplate](https://github.com/mobxjs/mobx-react-boilerpla
 
 ## Download zip
 
-You can [download]() a pre-installed version of this project.
+You can [download](http://webprogramozas.inf.elte.hu/user/gyozke/tmp/abweb-food-entries-mobx.zip) a pre-installed version of this project.
 
 ## Run the example
 
