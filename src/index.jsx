@@ -3,12 +3,21 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Application from './components/application';
 
+import AppState from './state/application-state'
+import { useStrict } from 'mobx'
+import { Provider } from 'mobx-react'
+
 import './index.css'
 import 'bootswatch/cosmo/bootstrap.min.css'
 
+useStrict(true)
+const appState = new AppState()
+
 render(
   <AppContainer>
-    <Application />
+    <Provider state={appState}>
+      <Application />
+    </Provider>
   </AppContainer>,
   document.getElementById('root')
 );
@@ -19,7 +28,7 @@ if (module.hot) {
 
     render(
       <AppContainer>
-        <NextApp />
+        <NextApp state={appState} />
       </AppContainer>,
       document.getElementById('root')
     );

@@ -14,7 +14,6 @@ export default class FoodEntriesList extends Component {
         title={meal} 
         items={this.meals.get(meal)}
         key={meal}
-        onEntryClick={entry => this.props.onEntryClick(entry)}
       />
     )
 
