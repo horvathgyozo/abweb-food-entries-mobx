@@ -4,8 +4,8 @@ class Panel extends Component {
   render() {
 
     const { title, items } = this.props
-    const tableRows = items.map(item => 
-      <tr>
+    const tableRows = items.map((item, i) => 
+      <tr key={i} onClick={() => this.props.onEntryClick(item)}>
         <td>{item.food}</td>
         <td>{item.quantity}</td>
         <td>{item.ch}</td>

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-// import logo from './logo.svg';
 import NavBar from '../navbar/'
-import Panel from '../panel/'
+import FoodEntriesList from '../food-entries-list/'
+import FoodEntryForm from '../food-entry-form/'
+
+let id = 10
 
 class Application extends Component {
 
@@ -10,26 +12,31 @@ class Application extends Component {
     this.state = {
       uiState: 'list', // 'list', 'new'
       date: new Date('2016-10-05'),
+      selectedEntry: null,
       entries: [
         { 
+          id: 1,
           date: '2016. 10. 05.',
           meal: 'reggeli',
           food: 'kenyér',
           quantity: '20gr', 
         },
         { 
+          id: 2,
           date: '2016. 10. 05.',
           meal: 'reggeli',
           food: 'sajt',
           quantity: '5gr', 
         },
         { 
+          id: 3,
           date: '2016. 10. 05.',
           meal: 'tízórai',
           food: 'alma',
           quantity: '200gr', 
         },
         { 
+          id: 4,
           date: '2016. 10. 06.',
           meal: 'reggeli',
           food: 'kenyér',
@@ -56,38 +63,92 @@ class Application extends Component {
 
   handleAddClick(e) {
     this.setState({
-      uiState: this.state.uiState === 'list' ? 'new' : 'list'
+      uiState: 'new'
     })
   }
 
-  render() {
+  handleEntrySubmission(data) {
+    data.date = this.localDateString
+    if (this.state.selectedEntry) {
+      const { selectedEntry: entry } = this.state
+      Object.assign(entry, data)
+      const { entries } = this.state
+      const index = entries.indexOf(entry)
+      this.setState({
+        entries: [...entries.slice(0, index), entry, ...entries.slice(index+1, entries.length)],
+        selectedEntry: null,
+        uiState: 'list'
+      })
+    } else {
+      data.id = ++id
+      this.setState({
+        entries: this.state.entries.concat(data),
+        uiState: 'list'
+      })
+    }
+  }
 
-    const date = this.state.date.toLocaleDateString()
+  handleEntryClick(entry) {
+    this.setState({
+      uiState: 'new',
+      selectedEntry: entry
+    })
+  }
+
+  handleCancelEntry() {
+    this.setState({
+      uiState: 'list',
+      selectedEntry: null
+    })
+  }
+
+  handleDeleteEntry() {
+    const { selectedEntry: entry } = this.state
+    const { entries } = this.state
+    const index = entries.indexOf(entry)
+    entries.splice(index, 1)
+    this.setState({
+      entries,
+      selectedEntry: null,
+      uiState: 'list'
+    })
+  }
+
+  get localDateString() {
+    return this.state.date.toLocaleDateString()
+  }
+
+  get meals() {
+    const date = this.localDateString
     const { entries } = this.state
 
     const entriesByDate = 
       entries.filter(entry => entry.date === date)
 
     const meals = new Set(entriesByDate.map(entry => entry.meal))
+
+    const itemsByMeal = new Map()
+    meals.forEach(meal => itemsByMeal.set(meal, entriesByDate.filter(entry=>entry.meal === meal)))
     
-    const panels = Array.from(meals.values()).map(meal => 
-      <Panel 
-        title={meal} 
-        items={entriesByDate.filter(entry=>entry.meal === meal)} 
-      />
-    )
+    return itemsByMeal
+  }
+
+  render() {
+
+    const date = this.state.date.toLocaleDateString()
 
     const compMapping = {
-      'list': (
-        <div className="row">
-          {panels}
-          <button className="btn btn-danger add-button"
-            onClick={e => this.handleAddClick(e)}>+</button>
-        </div> 
-      ),
-      'new': (
-        <p>alma</p>
-      )
+      'list': <FoodEntriesList 
+        meals={this.meals} 
+        handleAddClick={e => this.handleAddClick(e)}
+        onEntryClick={entry => this.handleEntryClick(entry)}
+      />,
+      'new': <FoodEntryForm 
+        onSubmit={data => this.handleEntrySubmission(data)}
+        entry={this.state.selectedEntry} 
+        onBack={() => this.handleCancelEntry()}
+        onDelete={() => this.handleDeleteEntry()}
+      />
     }
     const comp = compMapping[this.state.uiState]
 
