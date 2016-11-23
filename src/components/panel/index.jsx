@@ -7,7 +7,9 @@ class Panel extends Component {
 
     const { title, items } = this.props
     const tableRows = items.map((item, i) => 
-      <tr key={i} onClick={() => this.props.state.selectEntry(item)}>
+      <tr key={i} onClick={() => this.props.state.selectEntry(item)}
+        className={item.notSynced ? 'not-synced' : ''}
+      >
         <td>{item.food}</td>
         <td>{item.quantity}</td>
         <td>{item.ch}</td>

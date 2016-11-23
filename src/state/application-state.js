@@ -1,40 +1,39 @@
-import { observable, computed, action } from 'mobx'
+import { observable, computed, action, reaction } from 'mobx'
+import uuid from 'uuid'
 
 export default class AppState {
   _id = 10
-  @observable date = new Date('2016-10-05')
+  @observable date = new Date()
   @observable selectedEntry = null
-  @observable entries = [
-    { 
-      id: 1,
-      date: '2016. 10. 05.',
-      meal: 'reggeli',
-      food: 'kenyér',
-      quantity: '20gr', 
-    },
-    { 
-      id: 2,
-      date: '2016. 10. 05.',
-      meal: 'reggeli',
-      food: 'sajt',
-      quantity: '5gr', 
-    },
-    { 
-      id: 3,
-      date: '2016. 10. 05.',
-      meal: 'tízórai',
-      food: 'alma',
-      quantity: '200gr', 
-    },
-    { 
-      id: 4,
-      date: '2016. 10. 06.',
-      meal: 'reggeli',
-      food: 'kenyér',
-      quantity: '20gr', 
-    },
-    
-  ]
+  @observable entries = []
+  dates = new Set()
+
+  constructor() {
+    reaction(
+      () => this.localDateString,
+      date => this.getEntriesForDate(date) 
+    )
+    this.getEntriesForDate(this.localDateString)
+  }
+
+  getEntriesForDate(date) {
+    if (this.dates.has(date)) return
+
+    fetch(`http://localhost:4000/entries?filter[date]=${date}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+      }
+    })
+    .then(response => response.json())
+    .then(json => json.data.map(obj => Object.assign(obj.attributes, {id: obj.id})))
+    .then(action(arr => arr.forEach(entry => this.entries.push(entry))))
+    .then(() => {
+      this.dates.add(date)
+    })
+    .catch(e => console.log(e))
+  }
 
   @computed get localDateString() {
     return this.date.toLocaleDateString()
@@ -72,9 +71,36 @@ export default class AppState {
   }
 
   @action addEntry(data) {
-    data.id = ++this._id
+    data.id = uuid.v1()
     data.date = this.localDateString
+    data.notSynced = true
     this.entries.push(data)
+
+    const entry = {
+      data: {
+        type: 'entries',
+        id: data.id,
+        attributes: {
+          date: data.date,
+          meal: data.meal,
+          food: data.food,
+          quantity: data.quantity
+        }
+      }
+    }
+    fetch(`http://localhost:4000/entries`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+      },
+      body: JSON.stringify(entry)
+    })
+    .then(() => {
+      const i = this.entries.indexOf(data)
+      data.notSynced = false
+      this.entries[i] = Object.assign({}, data)
+    })
   }
 
   @action updateEntry(entry, data) {
