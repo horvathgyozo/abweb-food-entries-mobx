@@ -13,7 +13,7 @@ class Panel extends Component {
         <td>{item.ch}</td>
         <td>{item.kcal}</td>
         <td>{
-          item.notSynced &&
+          item.synced === false &&
           <span className="glyphicon glyphicon-warning-sign" style={{color: '#8a6d3b'}}></span>  
         }
         </td>

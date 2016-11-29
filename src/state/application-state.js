@@ -74,10 +74,10 @@ export default class AppState {
   @action addEntry(data) {
     data.id = uuid.v1()
     data.date = this.localDateString
-    data.notSynced = true
+    data.synced = false
     this.entries.push(data)
 
-    const entry = {
+    const jsonData = {
       data: {
         type: 'entries',
         id: data.id,
@@ -95,18 +95,42 @@ export default class AppState {
         'Accept': 'application/vnd.api+json',
         'Content-Type': 'application/vnd.api+json',
       },
-      body: JSON.stringify(entry)
+      body: JSON.stringify(jsonData)
     })
-    .then(action(() => data.notSynced = false))
+    .then(action(() => data.synced = true))
   }
 
   @action updateEntry(entry, data) {
     data.date = this.localDateString
-    Object.assign(entry, data)
+    Object.assign(entry, data, { synced: false })
+
+    const jsonData = {
+      data: {
+        type: 'entry',
+        id: entry.id,
+        attributes: data
+      }
+    } 
+    fetch(`http://localhost:4000/entries/${encodeURIComponent(entry.id)}`, {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json'
+      },
+      body: JSON.stringify(jsonData)
+    })
+      .then(action(() => data.synced = true))
   }
 
   @action deleteEntry(entry) {
     const index = this.entries.indexOf(entry)
     this.entries.splice(index, 1)
+
+    fetch(`http://localhost:4000/entry/${encodeURIComponent(entry.id)}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/vnd.api+json',
+      }
+    })
   }
 }
