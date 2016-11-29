@@ -8,6 +8,7 @@ export default class AppState {
   @observable entries = []
   dates = new Set()
 
+
   constructor() {
     reaction(
       () => this.localDateString,
@@ -96,11 +97,7 @@ export default class AppState {
       },
       body: JSON.stringify(entry)
     })
-    .then(() => {
-      const i = this.entries.indexOf(data)
-      data.notSynced = false
-      this.entries[i] = Object.assign({}, data)
-    })
+    .then(action(() => data.notSynced = false))
   }
 
   @action updateEntry(entry, data) {
