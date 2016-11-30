@@ -2,10 +2,12 @@
   "name": "mobx-react-boilerplate",
   "version": "1.0.0",
   "description": "Boilerplate for MobX + React project with JSX, ES6 compilation and hot code reloading",
+  "main": "main.js",
   "scripts": {
     "start": "node server.js",
     "lint": "eslint src",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
+    "desktop": "electron ."
   },
   "repository": {
     "type": "git",
@@ -45,6 +47,8 @@
   "dependencies": {
     "bootswatch": "^3.3.7",
     "cors": "^2.8.1",
+    "electron": "^1.4.10",
+    "electron-reload": "^1.0.3",
     "express": "^4.14.0",
     "fortune": "^5.0.2",
     "fortune-http": "^1.0.3",
