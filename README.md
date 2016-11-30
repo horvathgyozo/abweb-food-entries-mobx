@@ -8,6 +8,10 @@ Based on [mobx-react-boilerplate](https://github.com/mobxjs/mobx-react-boilerpla
 
 **2016.11.16** You can [download](http://webprogramozas.inf.elte.hu/user/gyozke/tmp/entry_form.zip) the new components.
 
+**2016.11.30** You can [download](http://webprogramozas.inf.elte.hu/user/gyozke/tmp/abweb-2016-11-30.zip) the actual state of the src directory.
+
+**2016.11.30** You can [download](http://webprogramozas.inf.elte.hu/user/gyozke/tmp/electron-api-demos.zip) the pre-installed version of electron-api-demos.
+
 
 ## Run the example
 
