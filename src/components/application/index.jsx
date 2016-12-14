@@ -5,6 +5,9 @@ import FoodEntryForm from '../food-entry-form/'
 
 import { observer } from 'mobx-react'
 
+import { increaseDate, decreaseDate } from '../../redux/actions'
+import { connect } from 'react-redux'
+
 let id = 10
 
 @observer(['state'])
@@ -35,7 +38,10 @@ class Application extends Component {
 
   render() {
 
-    const date = this.props.state.localDateString
+    console.log('Application props', this.props)
+
+    // const date = this.props.state.localDateString
+    const date = this.props.date
 
     const compMapping = {
       'list': <FoodEntriesList 
@@ -58,14 +64,14 @@ class Application extends Component {
           <div className="row">
             <div className="col-xs-2">
               <button className="btn btn-default"
-                onClick={e => this.props.state.decreaseDate()}>&lt;</button>
+                onClick={e => this.props.decreaseDate()}>&lt;</button>
             </div>
             <div className="col-xs-8">
               <h2>{date}</h2>
             </div>
             <div className="col-xs-2">
               <button className="btn btn-default"
-                onClick={e => this.props.state.increaseDate()}>&gt;</button>
+                onClick={e => this.props.increaseDate()}>&gt;</button>
             </div>
           </div>
 
@@ -78,4 +84,20 @@ class Application extends Component {
   }
 }
 
-export default Application;
+function mapStateToProps(state) {
+  return {
+    date: state.date.toLocaleDateString()
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    increaseDate: () => dispatch(increaseDate()),
+    decreaseDate: () => dispatch(decreaseDate()),
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Application);

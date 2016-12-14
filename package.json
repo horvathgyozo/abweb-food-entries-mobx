@@ -59,6 +59,8 @@
     "mobx-react-devtools": "^4.2.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
+    "react-redux": "^5.0.0",
+    "redux": "^3.6.0",
     "uuid": "^3.0.0"
   }
 }
